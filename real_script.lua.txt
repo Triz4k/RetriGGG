@@ -1,4 +1,4 @@
---TRIZ AIMBOT
+-- TRIZ AIMBOT 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
@@ -13,10 +13,11 @@ local TargetPlayer = nil
 local RightMouseButtonHeld = false
 local AimingEnabled = true
 local CircleVisible = true
+local OriginalCircleColor = Color3.fromRGB(107, 98, 155)
 
 local Circle = Drawing.new("Circle")
 Circle.Visible = CircleVisible
-Circle.Color = Color3.fromRGB(107, 98, 155)
+Circle.Color = OriginalCircleColor
 Circle.Thickness = 2
 Circle.Radius = CircleRadius
 Circle.Filled = false
@@ -73,17 +74,17 @@ UserInputService.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton2 then
         RightMouseButtonHeld = false
         TargetPlayer = nil
+        Circle.Color = OriginalCircleColor
     end
 end)
 
 RunService.RenderStepped:Connect(function()
-
     viewportSize = Camera.ViewportSize
     Circle.Position = Vector2.new(viewportSize.X/2, viewportSize.Y/2)
     Circle.Radius = CircleRadius
     BulletSpeed = getBulletSpeed()
     
-    if RightMouseButtonHeld and AimingEnabled and CircleVisible then
+    if RightMouseButtonHeld and AimingEnabled then
         local closestDistance = math.huge
         local currentTarget = nil
         
@@ -107,8 +108,15 @@ RunService.RenderStepped:Connect(function()
         end
         
         TargetPlayer = currentTarget
-        aimAtTarget()
+
+        if TargetPlayer then
+            Circle.Color = Color3.new(1, 0, 0) 
+            aimAtTarget()
+        else
+            Circle.Color = OriginalCircleColor 
+        end
     else
         TargetPlayer = nil
+        Circle.Color = OriginalCircleColor
     end
 end)
